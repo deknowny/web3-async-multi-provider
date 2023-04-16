@@ -1,0 +1,61 @@
+name: CI
+
+# Run tests for every push
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  # Run unit-tests
+  tests:
+    name: Install and run tests
+    strategy:
+      matrix:
+        # Select python versions that the library should support
+        python-version: ["3.9"]  # [ "3.7", "3.8", "3.9", "3.10", "pypy-3.8", "pypy-3.7"]
+        # Select platforms that the library should support
+        platform: ["ubuntu-latest", "macos-11", "windows-2022"]
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+
+      # Checkout ot the repo
+      - uses: actions/checkout@v2
+      # Correctly install required version
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # Install project with test dependencies
+      - name: Installing the current project in dev mode
+        run: make install-dev-test python_exec=python
+
+      # Run unit-tests with coverage reporting
+      - name: Run Unit-Tests
+        run: make test-ci python_exec=python
+
+      # Upload coverage for the used version
+      - name: Upload coverage data to coveralls.io
+        run: python -m poetry run coveralls --service=github
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_FLAG_NAME: ${{ matrix.python-version }}
+          COVERALLS_PARALLEL: true
+
+  # Upload coverage
+  coveralls:
+    name: Indicate completion to coveralls.io
+    needs: tests
+    runs-on: ubuntu-latest
+    container: python:3.9
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Finished
+        run: |
+          make install-dev-test python_exec=python
+          python -m poetry run coveralls --service=github --finish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

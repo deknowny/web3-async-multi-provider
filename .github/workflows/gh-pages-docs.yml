@@ -1,0 +1,25 @@
+name: Deploy docs to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - run: make install-dev-docs
+        name: Install mkdocs dependencies
+
+      - run: |
+          git config --local user.name ci-bot
+          git config --local user.email ci-bot@example.com
+          git fetch origin gh-pages --depth=1
+        name: Setting up git for mike
+
+      - run: make deploy-docs
+        name: Build docs
