@@ -44,19 +44,19 @@ jobs:
           COVERALLS_FLAG_NAME: ${{ matrix.python-version }}
           COVERALLS_PARALLEL: true
 
-  # Upload coverage
-  coveralls:
-    name: Indicate completion to coveralls.io
-    needs: tests
-    runs-on: macos-11
-    container: python:3.9
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - name: Finished
-        run: |
-          python -m pip install --upgrade poetry
-          python -m poetry install -E dev-test
-          python -m poetry run coveralls --service=github --finish
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#  # Upload coverage
+#  coveralls:
+#    name: Indicate completion to coveralls.io
+#    needs: tests
+#    runs-on: macos-11
+#    container: python:3.9
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-python@v2
+#      - name: Finished
+#        run: |
+#          python -m pip install --upgrade poetry
+#          python -m poetry install -E dev-test
+#          python -m poetry run coveralls --service=github --finish
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
