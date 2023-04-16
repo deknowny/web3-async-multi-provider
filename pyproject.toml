@@ -4,14 +4,14 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "web3_async_multi_provider"
-version = "0.1.0a0"
+version = "0.1.0b0"
 description = "Web3.py compatible async providers that supports multiply RPC URLs"
 authors = ["Kurbatov Yan <deknowny@gmail.com>"]
 license = "MIT"
 homepage = "https://github.com/deknowny/web3-async-multi-provider"
 documentation = "https://deknowny.github.io/web3-async-multi-provider/latest/"
 readme = "README.md"
-keywords = []  # Search keywords (max 5)
+keywords = ["web3", "async", "multi", "provider"]  # Search keywords (max 5)
 classifiers = []  # PyPI classifiers
 
 [tool.poetry.dependencies]
