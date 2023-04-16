@@ -1,5 +1,6 @@
 # Web3 async multi provider
 > Web3.py compatible async providers that supports multiply RPC URLs
+
 This library allows to create a `w3` instance with multiply RPC URLs to prevent failures when a node is down by choosing another one by cycle.
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/web3_async_multi_provider)
@@ -14,6 +15,10 @@ This library allows to create a `w3` instance with multiply RPC URLs to prevent 
 ## Overview
 HTTP w3 provider
 ```python
+import web3
+from web3_async_multi_provider import AsyncWSMultiProvider
+
+
 provider = AsyncHTTPMultiProvider(
     providers=[
         web3.AsyncHTTPProvider("https://eth.llamarpc.com"),
@@ -26,6 +31,7 @@ WebSockets provider
 ```python
 import web3
 from web3_async_multi_provider import AsyncWSMultiProvider
+
 
 provider = AsyncWSMultiProvider(
     providers=[
