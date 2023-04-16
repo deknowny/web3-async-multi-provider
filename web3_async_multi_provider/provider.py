@@ -13,53 +13,80 @@ class AllNodesAreDownError(Exception):
         super().__init__()
 
 
-class AsyncMultiProvider(web3.providers.async_base.AsyncJSONBaseProvider):
+class AsyncHTTPMultiProvider(web3.providers.async_base.AsyncJSONBaseProvider):
     logger = logging.getLogger(
-        "web3_async_multi_provider.provider.AsyncMultiProvider"
+        "web3_async_multi_provider.provider.AsyncHTTPMultiProvider"
     )
 
     def __init__(
         self,
-        urls: typing.List[str],
-        session: typing.Optional[reqsnaked.Client] = None,
-        request_extra: typing.Optional[typing.Dict[str, typing.Any]] = None,
+        providers: typing.List[web3.providers.async_base.AsyncBaseProvider],
     ):
-        self._urls = urls
-        self._session = session or reqsnaked.Client()
-        self._request_extra = request_extra or {}
-
+        self._providers = providers
         super().__init__()
 
     async def make_request(
         self, method: web3.types.RPCEndpoint, params: typing.Any
     ) -> web3.types.RPCResponse:
         happened_error = []
-        for url in self._urls.copy():
+        for provider in self._providers.copy():
             self.logger.debug(
-                f"Making request HTTP. URI: {url}, Method: {method}"
-            )
-            request_data = self.encode_rpc_request(method, params)
-            request = reqsnaked.Request(
-                "POST",
-                url=url,
-                body=request_data,
-                headers={"Content-Type": "application/json"},
+                f"Making request HTTP. Provider: {provider}, Method: {method}"
             )
             try:
-                response = await self._session.send(request)
-                raw_response = await response.read()
-                result_response = self.decode_rpc_response(
-                    raw_response.as_bytes()
-                )
+                result_response = await provider.make_request(method, params)
             except Exception as err:
-                self.logger.warning(f"Error occurred for URI: {url}: {err}")
-                this_url = self._urls.pop(0)
-                self._urls.append(this_url)
+                self.logger.warning(
+                    f"Error occurred for Provider: {provider}: {err}"
+                )
+                this_url = self._providers.pop(0)
+                self._providers.append(this_url)
                 happened_error.append(err)
             else:
                 self.logger.debug(
-                    f"Getting response HTTP. URI: {url}, "
-                    f"Method: {method}, Response: {response}"
+                    f"Getting response HTTP. Provider: {provider}, "
+                    f"Method: {method}, Response: {result_response}"
+                )
+                return result_response
+        else:
+            raise AllNodesAreDownError(happened_error)
+
+
+class AsyncWSMultiProvider(web3.providers.async_base.AsyncJSONBaseProvider):
+    logger = logging.getLogger(
+        "web3_async_multi_provider.provider.AsyncWSMultiProvider"
+    )
+
+    def __init__(
+        self, providers: typing.List[web3.providers.WebsocketProvider]
+    ):
+        self._providers = providers
+        super().__init__()
+
+    async def make_request(
+        self, method: web3.types.RPCEndpoint, params: typing.Any
+    ) -> web3.types.RPCResponse:
+        happened_error = []
+        for provider in self._providers.copy():
+            self.logger.debug(
+                f"Making request HTTP. Provider: {provider}, Method: {method}"
+            )
+            request_data = self.encode_rpc_request(method, params)
+            try:
+                result_response = await provider.coro_make_request(
+                    request_data
+                )
+            except Exception as err:
+                self.logger.warning(
+                    f"Error occurred for URI: {provider}: {err}"
+                )
+                this_provider = self._providers.pop(0)
+                self._providers.append(this_provider)
+                happened_error.append(err)
+            else:
+                self.logger.debug(
+                    f"Getting response HTTP. URI: {provider}, "
+                    f"Method: {method}, Response: {result_response}"
                 )
                 return result_response
         else:

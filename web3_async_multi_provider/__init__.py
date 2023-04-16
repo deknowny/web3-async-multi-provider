@@ -1,4 +1,8 @@
 from . import provider
-from .provider import AllNodesAreDownError, AsyncMultiProvider
+from .provider import (
+    AllNodesAreDownError,
+    AsyncHTTPMultiProvider,
+    AsyncWSMultiProvider,
+)
 
 __version__ = "0.1.0a0"

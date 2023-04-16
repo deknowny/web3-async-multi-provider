@@ -36,7 +36,7 @@ mypy = {optional = true, version="^0.930"}
 mkdocs = {optional = true, version="^1.2.3"}
 mkdocs-material = {optional = true, version="^8.0.2"}
 mike = {optional = true, version="^1.1.2"}
-reqsnaked = "^0.1.0-beta1"
+web3 = "6.2.0"
 
 [tool.poetry.extras]
 # Ordinary extra dependencies

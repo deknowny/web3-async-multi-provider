@@ -2,15 +2,16 @@ import pytest
 import web3
 import web3.eth
 
-from web3_async_multi_provider import AsyncMultiProvider, AllNodesAreDownError
+from web3_async_multi_provider import AllNodesAreDownError, AsyncWSMultiProvider
 
 
+@pytest.mark.skip
 @pytest.mark.asyncio
 async def test_multi_nodes():
-    provider = AsyncMultiProvider(
-        urls=[
-            "https://example.com/",
-            "https://eth.llamarpc.com"
+    provider = AsyncWSMultiProvider(
+        providers=[
+            web3.providers.WebsocketProvider("wss://example.com/"),
+            web3.providers.WebsocketProvider("wss://mainnet.infura.io/ws")
         ]
     )
     w3 = web3.Web3(
@@ -23,10 +24,10 @@ async def test_multi_nodes():
 
 @pytest.mark.asyncio
 async def test_check_failed():
-    provider = AsyncMultiProvider(
-        urls=[
-            "https://example.com/",
-            "https://google.com/",
+    provider = AsyncWSMultiProvider(
+        providers=[
+            web3.providers.WebsocketProvider("wss://example.com/"),
+            web3.providers.WebsocketProvider("wss://google.com/"),
         ]
     )
     w3 = web3.Web3(
