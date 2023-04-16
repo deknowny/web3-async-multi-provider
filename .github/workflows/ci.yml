@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         # Select python versions that the library should support
-        python-version: ["3.9"]  # [ "3.7", "3.8", "3.9", "3.10", "pypy-3.8", "pypy-3.7"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "pypy-3.8"]  # [ "3.7", "3.8", "3.9", "3.10", "pypy-3.8", "pypy-3.7"]
         # Select platforms that the library should support
         platform: ["ubuntu-latest", "macos-11", "windows-2022"]
 
