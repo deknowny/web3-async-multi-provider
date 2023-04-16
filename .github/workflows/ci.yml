@@ -55,9 +55,8 @@ jobs:
       - uses: actions/setup-python@v2
       - name: Finished
         run: |
-          apt update
-          apt install libc6
-          make install-dev-test python_exec=python
+          python -m pip install --upgrade poetry
+          python -m poetry install -E dev-test
           python -m poetry run coveralls --service=github --finish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
