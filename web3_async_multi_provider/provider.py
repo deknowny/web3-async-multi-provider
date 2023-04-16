@@ -1,8 +1,6 @@
 import logging
 import typing
 
-import reqsnaked
-import web3
 import web3.providers.async_base
 import web3.types
 
