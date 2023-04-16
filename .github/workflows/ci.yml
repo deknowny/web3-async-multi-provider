@@ -55,8 +55,8 @@ jobs:
       - uses: actions/setup-python@v2
       - name: Finished
         run: |
-          sudo apt update
-          sudo apt install libc6
+          apt update
+          apt install libc6
           make install-dev-test python_exec=python
           python -m poetry run coveralls --service=github --finish
         env:
